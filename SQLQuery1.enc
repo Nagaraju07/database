@@ -1,0 +1,117 @@
+use EHMS_DB
+select * from EHMS.Users
+
+create table EHMS.Users
+(
+UserId int identity(1,1) primary key,
+FirstName varchar(25),
+LastName varchar(25),
+EmailId varchar(25),
+Password varchar(25),
+)
+--procedures for user table 
+--Add Procedure
+create proc  EHMS.usp_AddUser
+@FirstName varchar(25),
+@LastName varchar(25),
+@EmailId varchar(25),
+@Password varchar(25)
+AS
+Begin 
+insert into EHMS.Users values(@FirstName,@LastName,@EmailId,@Password)
+End
+--Add Procedure Ends
+
+--Display  Procedure
+create proc EHMS.usp_DisplayUser 
+AS
+BEGIN
+select UserId,FirstName ,LastName,EmailId from EHMS.Users
+END 
+--Display  Procedure Ends
+
+--Update Procedure
+create proc EHMS.usp_UpdateUser
+@UserId int,
+@FirstName varchar(25),
+@LastName varchar(25),
+@EmailId varchar(25)
+AS
+BEGIN
+update EHMS.Users set FirstName=@FirstName,LastName=@LastName,EmailId=@EmailId Where UserId=@UserId
+END
+--Update Procedure ends
+
+--UpdatePassword Procedure
+create proc EHMS.usp_UpdateUserPassword
+@UserId int,
+@Password varchar(25)
+AS
+BEGIN
+update EHMS.Users set Password=@Password Where UserId=@UserId
+END
+--updatePassword ends
+
+
+
+
+
+
+create table EHMS.Seller
+(
+SellerID int identity(1,1) primary key,
+FirstName varchar(25),
+LastName varchar(25),
+DateofBirth date not null,
+PhoneNo varchar(10) not null,
+SellerAddress varchar(250) not null,
+StateId int,
+CityId int,
+EmailId varchar(50) not null,
+UserId int foreign key REFERENCES EHMS.Users(UserID)  
+)
+
+
+
+
+create table EHMS.State
+(
+StateId int identity(1,1) primary key,
+StateName varchar(25)
+)
+create table EHMS.City
+(
+CityId int identity(1,1) primary key, 
+CityName varchar(50) not null,
+StateId int foreign key REFERENCES EHMS.State(StateId) not null
+)
+create table EHMS.Buyer
+(
+UserId int foreign key references EHMS.Users(UserId),
+FirstName varchar(25) not null,
+LastName varchar(25) not null,
+DateOfBirth date not null, 
+PhoneNo varchar(10) not null,
+EmailId varchar(50) not null
+)
+create table EHMS.Property 
+(
+PropertyId int identity primary key, 
+PropertyName varchar(50) not null,
+PropertyType bit not null, 
+PropertyOption varchar(10) not null,
+Description varchar(250), 
+StreetAddress varchar(250) not null,
+City varchar(25),
+StateId int foreign key references EHMS.State(StateId) not null,
+Price money not null,
+InitialDeposit money not null, 
+Landmark varchar(25) not null,
+IsActive bit not null,
+)
+create table EHMS.Images
+(
+ImageId int identity primary key,
+PropertyId int foreign key references EHMS.Property(PropertyId) not null,
+PropertyImage image
+)
